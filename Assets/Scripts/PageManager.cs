@@ -5,6 +5,7 @@ using UnityEngine;
 public class PageManager : MonoBehaviour {
 
     public GameObject converterObject;
+    public List<ScreenControl> screens;
 
     private ImageLoader loader;
     private PDFToImages converter;
@@ -27,40 +28,33 @@ public class PageManager : MonoBehaviour {
     public void LoadImages()
     {
         pages = loader.LoadPages(converter.GetImageFolder());
+        UpdateScreens();
     }
 
-    public bool GetPageTexture(int i, out Texture2D tex)
+    public void NextPage()
     {
-        if (i < pages.Count)
+        if (currentPage + 1 < pages.Count)
         {
-            tex = pages[i];
-            return true;
-        } else
-        {
-            tex = null;
-            return false;
+            currentPage++;
+            UpdateScreens();
         }
     }
 
-    public Texture2D GetCurrent()
-    {
-        return pages[currentPage];
-    }
-
-    public Texture2D GetNext()
-    {
-        if (currentPage + 1 < pages.Count)
-            currentPage++;
-
-        return pages[currentPage];
-    }
-
-    public Texture2D GetPrevious()
+    public void PreviousPage()
     {
         if (currentPage - 1 >= 0)
+        {
             currentPage--;
-
-        return pages[currentPage];
+            UpdateScreens();
+        }
     }
+
+    private void UpdateScreens()
+    {
+        foreach (ScreenControl screen in screens)
+        {
+            screen.SetTexture(pages[currentPage]);
+        }
+    }    
 
 }
