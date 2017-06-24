@@ -40,18 +40,17 @@ public class PDFToImages : MonoBehaviour {
     public GameObject managerObject;
     public bool finished { get; private set; }
 
-    private string saveDirectory = "Assets/temp/cpdfs/";
+    private string saveDirectory = "";
     private Thread convertThread;
     private int pdfNumber = 0;
     private PageManager manager;
 
 	void Awake () {
-        if (Directory.Exists(saveDirectory))
-            DeleteDir(saveDirectory);
-
-        // TODO: Get a temporary directory from Windows that can be saved to
+        saveDirectory = Path.GetTempPath();
+        saveDirectory.Replace(@"\", "/");
+        saveDirectory += "Presto/pdfs/";
         Directory.CreateDirectory(saveDirectory);
-
+        
         finished = false;
         manager = managerObject.GetComponent<PageManager>();
     }
@@ -69,7 +68,7 @@ public class PDFToImages : MonoBehaviour {
         PDFConvert converter = new PDFConvert(inputFile, imageSaveDir);
         convertThread = new Thread(new ThreadStart(converter.Convert));
         convertThread.Start();
-        // Unfortunately message sending doesn't work on a 2nd thread
+        // Unfortunately message sending doesn't work from a 2nd thread
         // so we have to repeatedly check if conversion has finished
         InvokeRepeating("CheckFinish", 0.5f, 1.0f);
     }
@@ -84,6 +83,7 @@ public class PDFToImages : MonoBehaviour {
         if (IsFinished())
         {
             CancelInvoke("CheckFinish");
+            convertThread = null;
             ConvertHasFinished();
         }
     }

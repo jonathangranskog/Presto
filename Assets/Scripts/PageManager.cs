@@ -15,6 +15,7 @@ public class PageManager : MonoBehaviour {
     void Start() {
         loader = GetComponent<ImageLoader>();
         converter = converterObject.GetComponent<PDFToImages>();
+        pages = new List<Texture2D>();
         LoadPDF("Test/input.pdf");
     }
 
@@ -51,6 +52,8 @@ public class PageManager : MonoBehaviour {
 
     private void UpdateScreens()
     {
+        if (pages.Count == 0) return;
+
         foreach (ScreenControl screen in screens)
         {
             screen.SetTexture(pages[currentPage]);
