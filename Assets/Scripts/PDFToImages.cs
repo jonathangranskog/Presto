@@ -37,15 +37,13 @@ public class PDFConvert
 
 public class PDFToImages : MonoBehaviour {
 
-    public string folder;
-    public string file;
-    public GameObject loaderObject;
+    public GameObject managerObject;
     public bool finished { get; private set; }
 
     private string saveDirectory = "Assets/temp/cpdfs/";
     private Thread convertThread;
     private int pdfNumber = 0;
-    private ImageLoader loader;
+    private PageManager manager;
 
 	void Awake () {
         if (Directory.Exists(saveDirectory))
@@ -55,7 +53,7 @@ public class PDFToImages : MonoBehaviour {
         Directory.CreateDirectory(saveDirectory);
 
         finished = false;
-        loader = loaderObject.GetComponent<ImageLoader>();
+        manager = managerObject.GetComponent<PageManager>();
     }
 
     private void OnApplicationQuit()
@@ -63,14 +61,9 @@ public class PDFToImages : MonoBehaviour {
         CleanImages();
     }
 
-    public void Convert()
+    public void Convert(string inputFile)
     {
-        Convert(folder + file, saveDirectory);
-    }
-
-    public void Convert(string inputFile, string outputFolder)
-    {
-        string imageSaveDir = GenerateNewDirectory(outputFolder);
+        string imageSaveDir = GenerateNewDirectory(saveDirectory);
         Directory.CreateDirectory(imageSaveDir);
         finished = false;
         PDFConvert converter = new PDFConvert(inputFile, imageSaveDir);
@@ -110,8 +103,8 @@ public class PDFToImages : MonoBehaviour {
     private void ConvertHasFinished()
     {
         finished = true;
-        if (loader == null)
-            loader.SendMessage("LoadPages");
+        if (manager != null)
+            manager.SendMessage("LoadImages");
     }
 
     public void Interrupt()

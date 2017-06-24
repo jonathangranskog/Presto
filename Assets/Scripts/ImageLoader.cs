@@ -4,26 +4,9 @@ using UnityEngine;
 
 public class ImageLoader : MonoBehaviour {
 
-    public GameObject converterObject;
-
-    private List<Texture2D> pages;
-    private PDFToImages converter;
-    
-    private void Start()
+    public List<Texture2D> LoadPages(string saveDirectory)
     {
-        converter = converterObject.GetComponent<PDFToImages>();
-        pages = new List<Texture2D>();
-    }
-
-    private void OnDestroy()
-    {
-        pages.Clear();
-    }
-    
-    public void LoadPages()
-    {
-        pages.Clear();
-        string saveDirectory = converter.GetImageFolder();
+        List<Texture2D> pages = new List<Texture2D>();
         DirectoryInfo dir = new DirectoryInfo(saveDirectory);
         FileInfo[] files = dir.GetFiles();
 
@@ -38,5 +21,7 @@ public class ImageLoader : MonoBehaviour {
         }
 
         Debug.Log("Loaded List<Texture2D> of length: " + pages.Count);
+
+        return pages;
     }
 }
