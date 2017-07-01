@@ -5,6 +5,7 @@ using UnityEngine;
 public class ActionManager : MonoBehaviour {
 
     public GameObject pageManagerObject;
+    public Material cursorMaterial;
 
     private PageManager pageManager;
     private bool menuOpen = false;
@@ -15,25 +16,22 @@ public class ActionManager : MonoBehaviour {
     void Start()
     {
         pageManager = pageManagerObject.GetComponent<PageManager>();
-        cursor = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        cursorRenderer = cursor.GetComponent<MeshRenderer>();
-        cursor.transform.localScale = 0.05f * Vector3.one;
-        cursorRenderer.enabled = false;
-        Destroy(cursor.GetComponent<SphereCollider>());
+        CreateCursor();
     }
 
     private void Update()
     {
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit = new RaycastHit();
-        if (Physics.Raycast(ray, out hit))
+
+        // TODO: Limit raycast to menu and screen objects
+
+        if ((triggerHeld || menuOpen) && Physics.Raycast(ray, out hit))
         {
-            if (triggerHeld)
-            {
-                cursorRenderer.enabled = true;
-                cursor.transform.position = hit.point;
-            }
-        } else if (triggerHeld)
+            cursorRenderer.enabled = true;
+            cursor.transform.position = hit.point;
+            cursor.transform.forward = hit.normal;
+        } else
         {
             cursorRenderer.enabled = false;
         }
@@ -41,31 +39,62 @@ public class ActionManager : MonoBehaviour {
 
     public void TriggerPress()
     {
-        // TODO: Create laser pointer if it does not hit menu
-        Debug.Log("Trigger pressed!");
+        // TODO: Menu interaction
         triggerHeld = true;
-        cursorRenderer.enabled = true;
     }
 
     public void TriggerUnpress()
     {
         triggerHeld = false;
-        cursorRenderer.enabled = false;
     }
 
     public void PadRightClick()
     {
+        // TODO: If page manager loading, interrupt!
         pageManager.NextPage();
     }
 
     public void PadLeftClick()
     {
+        // TODO: If page manager loading, interrupt!
         pageManager.PreviousPage();
     }
 
     public void MenuClick()
     {
-        // TODO: Open or close menu
+        if (menuOpen)
+        {
+            CloseMenu();
+        } else
+        {
+            OpenMenu();
+        }
+        menuOpen = !menuOpen;
         Debug.Log("Menu button clicked!");
     }
+
+    private void OpenMenu()
+    {
+        // TODO: Create a menu via MenuManager if menu has not been created
+        // else make menu visible and put in pointer or gaze direction
+    }
+
+    private void CloseMenu()
+    {
+        // TODO: Hide Menu via MenuManager
+    }
+
+    private void CreateCursor()
+    {
+        GameObject cursorObj = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        cursorRenderer = cursorObj.GetComponent<MeshRenderer>();
+        cursorObj.transform.localScale = 0.025f * (new Vector3(1, 0.01f, 1));
+        cursorRenderer.enabled = false;
+        cursorRenderer.material = cursorMaterial;
+        cursorObj.transform.Rotate(90, 0, 0);
+        Destroy(cursorObj.GetComponent<CapsuleCollider>());
+        cursor = new GameObject();
+        cursorObj.transform.parent = cursor.transform;
+    }
+
 }
