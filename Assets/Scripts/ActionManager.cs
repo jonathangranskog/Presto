@@ -6,27 +6,31 @@ public class ActionManager : MonoBehaviour {
 
     public GameObject pageManagerObject;
     public Material cursorMaterial;
+    public float rayCastMaxDist = 20.0f;
 
     private PageManager pageManager;
     private bool menuOpen = false;
     private bool triggerHeld = false;
     private GameObject cursor;
     private MeshRenderer cursorRenderer;
-
+    private int cursorRaycastMask;
+    
+    
     void Start()
     {
         pageManager = pageManagerObject.GetComponent<PageManager>();
         CreateCursor();
+        int screenLayer = 1 << 31;
+        int menuLayer = 1 << 30;
+        cursorRaycastMask = menuLayer | screenLayer;
     }
 
     private void Update()
     {
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit = new RaycastHit();
-
-        // TODO: Limit raycast to menu and screen objects
-
-        if ((triggerHeld || menuOpen) && Physics.Raycast(ray, out hit))
+        
+        if ((triggerHeld || menuOpen) && Physics.Raycast(ray, out hit, rayCastMaxDist, cursorRaycastMask))
         {
             cursorRenderer.enabled = true;
             cursor.transform.position = hit.point;
