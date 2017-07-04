@@ -7,18 +7,20 @@ public class ActionManager : MonoBehaviour {
     public GameObject pageManagerObject;
     public Material cursorMaterial;
     public float rayCastMaxDist = 20.0f;
-
+    public GameObject menuObject;
+    
     private PageManager pageManager;
     private bool menuOpen = false;
     private bool triggerHeld = false;
     private GameObject cursor;
     private MeshRenderer cursorRenderer;
     private int cursorRaycastMask;
-    
+    private MenuManager menu;
     
     void Start()
     {
         pageManager = pageManagerObject.GetComponent<PageManager>();
+        menu = menuObject.GetComponent<MenuManager>();
         CreateCursor();
         int screenLayer = 1 << 31;
         int menuLayer = 1 << 30;
@@ -30,7 +32,12 @@ public class ActionManager : MonoBehaviour {
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit = new RaycastHit();
         
-        if ((triggerHeld || menuOpen) && Physics.Raycast(ray, out hit, rayCastMaxDist, cursorRaycastMask))
+        if (triggerHeld && Physics.Raycast(ray, out hit, rayCastMaxDist, cursorRaycastMask))
+        {
+            cursorRenderer.enabled = true;
+            cursor.transform.position = hit.point;
+            cursor.transform.forward = hit.normal;
+        } else if (menuOpen && menu.RaycastUI(ray, out hit))
         {
             cursorRenderer.enabled = true;
             cursor.transform.position = hit.point;
@@ -74,18 +81,19 @@ public class ActionManager : MonoBehaviour {
             OpenMenu();
         }
         menuOpen = !menuOpen;
-        Debug.Log("Menu button clicked!");
     }
 
     private void OpenMenu()
     {
         // TODO: Create a menu via MenuManager if menu has not been created
         // else make menu visible and put in pointer or gaze direction
+        menuObject.SetActive(true);
     }
 
     private void CloseMenu()
     {
         // TODO: Hide Menu via MenuManager
+        menuObject.SetActive(false);
     }
 
     private void CreateCursor()
@@ -98,6 +106,7 @@ public class ActionManager : MonoBehaviour {
         cursorObj.transform.Rotate(90, 0, 0);
         Destroy(cursorObj.GetComponent<CapsuleCollider>());
         cursor = new GameObject();
+        cursor.name = "Cursor";
         cursorObj.transform.parent = cursor.transform;
     }
 
