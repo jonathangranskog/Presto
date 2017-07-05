@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ActionManager : MonoBehaviour {
 
@@ -10,7 +11,6 @@ public class ActionManager : MonoBehaviour {
     public GameObject menuObject;
     
     private PageManager pageManager;
-    private bool menuOpen = false;
     private bool triggerHeld = false;
     private GameObject cursor;
     private MeshRenderer cursorRenderer;
@@ -31,18 +31,25 @@ public class ActionManager : MonoBehaviour {
     {
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit = new RaycastHit();
-        
-        if (triggerHeld && Physics.Raycast(ray, out hit, rayCastMaxDist, cursorRaycastMask))
+
+        if (menu.isOpen())
         {
-            cursorRenderer.enabled = true;
-            cursor.transform.position = hit.point;
-            cursor.transform.forward = hit.normal;
-        } else if (menuOpen && menu.RaycastUI(ray, out hit))
+            if (menu.RaycastCanvas(ray, out hit))
+            {
+                cursorRenderer.enabled = true;
+                cursor.transform.position = hit.point;
+                cursor.transform.forward = hit.normal;
+            }    
+        } else if (triggerHeld)
         {
-            cursorRenderer.enabled = true;
-            cursor.transform.position = hit.point;
-            cursor.transform.forward = hit.normal;
-        } else
+            if (Physics.Raycast(ray, out hit, rayCastMaxDist, cursorRaycastMask))
+            {
+                cursorRenderer.enabled = true;
+                cursor.transform.position = hit.point;
+                cursor.transform.forward = hit.normal;
+            }
+        }
+        else
         {
             cursorRenderer.enabled = false;
         }
@@ -50,7 +57,21 @@ public class ActionManager : MonoBehaviour {
 
     public void TriggerPress()
     {
-        // TODO: Menu interaction
+        if (menu.isOpen())
+        {
+            Ray ray = new Ray(transform.position, transform.forward);
+            RaycastHit hit = new RaycastHit();
+            if (menu.RaycastCanvas(ray, out hit))
+            {
+                Button button = menu.GetButtonAtPosition(hit.point);
+                if (button != null)
+                {
+                    Debug.Log(button.gameObject.name + " pressed!");
+                    //button.onClick.Invoke();
+                }
+            }
+        }
+
         triggerHeld = true;
     }
 
@@ -73,27 +94,7 @@ public class ActionManager : MonoBehaviour {
 
     public void MenuClick()
     {
-        if (menuOpen)
-        {
-            CloseMenu();
-        } else
-        {
-            OpenMenu();
-        }
-        menuOpen = !menuOpen;
-    }
-
-    private void OpenMenu()
-    {
-        // TODO: Create a menu via MenuManager if menu has not been created
-        // else make menu visible and put in pointer or gaze direction
-        menuObject.SetActive(true);
-    }
-
-    private void CloseMenu()
-    {
-        // TODO: Hide Menu via MenuManager
-        menuObject.SetActive(false);
+        menu.Toggle();
     }
 
     private void CreateCursor()

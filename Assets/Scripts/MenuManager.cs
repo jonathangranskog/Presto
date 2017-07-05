@@ -7,8 +7,10 @@ public class MenuManager : MonoBehaviour {
 
     public GameObject canvasObject;
 
+    private bool open = false;
     private Canvas canvas;
     private RectTransform canvasTransform;
+
 
     private void Start()
     {
@@ -16,46 +18,76 @@ public class MenuManager : MonoBehaviour {
         canvasTransform = canvasObject.GetComponent<RectTransform>();
     }
 
-    public bool RaycastUI(Ray ray, out RaycastHit hit)
+    public bool isOpen()
+    {
+        return open;
+    }
+
+    public void Toggle()
+    {      
+        if (open)
+        {
+            open = false;
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            open = true;
+            SetTransform();
+            gameObject.SetActive(true);
+        }
+    }
+
+    public void SetTransform()
+    {
+        transform.position = Camera.main.transform.position + Camera.main.transform.forward * 1.5f;
+        transform.LookAt(Camera.main.transform);
+    }
+
+    public bool RaycastCanvas(Ray ray, out RaycastHit hit)
     {
         RaycastHit h = new RaycastHit();
         hit = h;
-
         Vector3[] canvasCorners = new Vector3[4];
         canvasTransform.GetWorldCorners(canvasCorners);
         Plane canvasPlane = new Plane(canvasCorners[0], canvasCorners[1], canvasCorners[2]);
 
         float t;
-        if (canvasPlane.Raycast(ray, out t))
+        
+        if (RaycastBoundedPlane(ray, canvasCorners, canvasPlane, out t))
         {
-            IList<Graphic> graphics = GraphicRegistry.GetGraphicsForCanvas(canvas);
+            hit.distance = t;
+            hit.point = ray.GetPoint(t);
+            hit.normal = canvasPlane.normal;
+            return true;
+        }
 
-            for (int i = 0; i < graphics.Count; i++)
+        return false;
+    }
+
+    // Assumes point is on the same plane as button
+    public Button GetButtonAtPosition(Vector3 pos)
+    {
+        IList<Graphic> graphics = GraphicRegistry.GetGraphicsForCanvas(canvas);
+
+        for (int i = 0; i < graphics.Count; i++)
+        {
+            Graphic graphic = graphics[i];
+            RectTransform transform = graphic.rectTransform;
+            GameObject obj = transform.gameObject;
+
+            if (obj.GetComponent<Button>() != null)
             {
-                Graphic graphic = graphics[i];
-                RectTransform transform = graphic.rectTransform;
-                GameObject obj = transform.gameObject;
-                if (obj.GetComponent<Button>() != null)
+                Vector3[] corners = new Vector3[4];
+                transform.GetWorldCorners(corners);
+                if (WithinPlane(pos, corners))
                 {
-                    Vector3[] corners = new Vector3[4];
-                    transform.GetWorldCorners(corners);
-                    Plane plane = new Plane(corners[0], corners[1], corners[2]);
-
-                    if (RaycastBoundedPlane(ray, corners, plane, out t))
-                    {
-                        hit.distance = t;
-                        hit.point = ray.GetPoint(t);
-                        hit.normal = plane.normal;
-                        return true;
-                    }
+                    return obj.GetComponent<Button>();
                 }
             }
-
-            return false;
-        } else
-        {
-            return false;
         }
+
+        return null;
     }
 
     private bool RaycastBoundedPlane(Ray ray, Vector3[] corners, Plane plane, out float t)
