@@ -14,8 +14,12 @@ public class MenuManager : MonoBehaviour {
     private Canvas canvas;
     private RectTransform canvasTransform;
     private string currentDirectory;
+    private FileInfo[] files;
+    private DirectoryInfo[] folders;
     private List<GameObject> buttons;
     private PageManager pageManager;
+    private int width = 3;
+    private int height = 3;
 
     private void Start()
     {
@@ -71,41 +75,70 @@ public class MenuManager : MonoBehaviour {
     {
         buttons.Clear();
         DirectoryInfo newDir = new DirectoryInfo(path);
-        //DirectoryInfo[] folders = newDir.GetDirectories();
-        FileInfo[] files = newDir.GetFiles();
+        folders = newDir.GetDirectories();
+        FileInfo[] allFiles = newDir.GetFiles();
 
-        /*for (int i = 0; i < folders.Length; i++)
-        {
-            GameObject folderButton = Instantiate(folderButtonObject);
-            FolderProperties properties = folderButton.GetComponent<FolderProperties>();
-            properties.SetProperties(folders[i], this);
-            RectTransform rectTransform = folderButton.GetComponent<RectTransform>(); 
-            rectTransform.parent = canvasObject.GetComponent<RectTransform>();
-            ResetButtonTransform(rectTransform);
-            buttons.Add(folderButton);
-        }*/
+        List<FileInfo> documents = new List<FileInfo>();
 
-        for (int i = 0; i < files.Length; i++)
+        for (int i = 0; i < allFiles.Length; i++)
         {
-            if (files[i].Extension.ToLower() == ".pdf")
+            if (allFiles[i].Extension == ".pdf")
             {
-                GameObject fileButton = Instantiate(fileButtonObject);
-                FileProperties properties = fileButton.GetComponent <FileProperties>();
-                properties.SetProperties(files[i], pageManager);
-                fileButton.transform.localScale = Vector3.one;
-                RectTransform rectTransform = fileButton.GetComponent<RectTransform>(); 
-                rectTransform.parent = canvasObject.GetComponent<RectTransform>();
-                ResetButtonTransform(rectTransform);
-                fileButton.SetActive(false);
-                buttons.Add(fileButton);
+                documents.Add(allFiles[i]);
             }
-        }          
+        }
+
+        files = documents.ToArray();        
     }
 
     // Show an align buttons on Canvas
     private void UpdateView(int page)
+    {   
+        int folderCount = folders.Length;
+        int fileCount = files.Length;
+        int totalCount = fileCount + folderCount;
+        int startIndex = page * width * height;
+        if (startIndex >= totalCount) return;
+        int endIndex = (page + 1) * width * height;
+
+        // Clean up old game objects first
+        foreach (GameObject button in buttons) Destroy(button);
+        buttons.Clear();
+
+        for (int i = startIndex; i < endIndex; i++)
+        {
+            if (i < fileCount)
+            {
+                GameObject fileButton = Instantiate(fileButtonObject);
+                FileProperties properties = fileButton.GetComponent<FileProperties>();
+                properties.SetProperties(files[i], pageManager);
+                RectTransform rectTransform = fileButton.GetComponent<RectTransform>();
+                rectTransform.parent = canvasObject.GetComponent<RectTransform>();
+                ResetButtonTransform(rectTransform);
+                SetButtonPosition(i, rectTransform);
+                buttons.Add(fileButton);
+            } else if (i < totalCount)
+            { 
+                int index = i - fileCount;
+                GameObject folderButton = Instantiate(folderButtonObject);
+                FolderProperties properties = folderButton.GetComponent<FolderProperties>();
+                properties.SetProperties(folders[index], this);
+                RectTransform rectTransform = folderButton.GetComponent<RectTransform>();
+                rectTransform.parent = canvasObject.GetComponent<RectTransform>();
+                ResetButtonTransform(rectTransform);
+                SetButtonPosition(i, rectTransform);
+                buttons.Add(folderButton);
+            } else
+            {
+                break;
+            }
+        }
+
+    }
+
+    private void SetButtonPosition(int index, RectTransform rectTransform)
     {
-        
+        // TODO: Set positions
     }
 
     private void ResetButtonTransform(RectTransform rectTransform)
