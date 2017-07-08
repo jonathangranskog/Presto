@@ -1,21 +1,30 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 
 public class MenuManager : MonoBehaviour {
 
     public GameObject canvasObject;
+    public GameObject folderButtonObject;
+    public GameObject fileButtonObject;
+    public GameObject pageManagerObject;
 
     private bool open = false;
     private Canvas canvas;
     private RectTransform canvasTransform;
-
+    private string currentDirectory;
+    private List<GameObject> buttons;
+    private PageManager pageManager;
 
     private void Start()
     {
+        pageManager = pageManagerObject.GetComponent<PageManager>();
         canvas = canvasObject.GetComponent<Canvas>();
         canvasTransform = canvasObject.GetComponent<RectTransform>();
+        string myDocuments = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+        buttons = new List<GameObject>();
+        OpenFolder(myDocuments);
     }
 
     public bool isOpen()
@@ -36,6 +45,74 @@ public class MenuManager : MonoBehaviour {
             SetTransform();
             gameObject.SetActive(true);
         }
+    }
+
+    public void GoUpOneLevel()
+    {
+        DirectoryInfo currentDirInfo = new DirectoryInfo(currentDirectory);
+        DirectoryInfo parent = currentDirInfo.Parent;
+        OpenFolder(parent.FullName);
+    }
+
+    public void OpenFolder(string path)
+    {
+        if (!Directory.Exists(path))
+        {
+            Debug.LogError("Directory does not exist!");
+            return;
+        }
+        currentDirectory = path;
+        UpdateInfo(path);
+        UpdateView(0);
+    }
+
+    // Create game objects (buttons etc.) and set their properties
+    private void UpdateInfo(string path)
+    {
+        buttons.Clear();
+        DirectoryInfo newDir = new DirectoryInfo(path);
+        //DirectoryInfo[] folders = newDir.GetDirectories();
+        FileInfo[] files = newDir.GetFiles();
+
+        /*for (int i = 0; i < folders.Length; i++)
+        {
+            GameObject folderButton = Instantiate(folderButtonObject);
+            FolderProperties properties = folderButton.GetComponent<FolderProperties>();
+            properties.SetProperties(folders[i], this);
+            RectTransform rectTransform = folderButton.GetComponent<RectTransform>(); 
+            rectTransform.parent = canvasObject.GetComponent<RectTransform>();
+            ResetButtonTransform(rectTransform);
+            buttons.Add(folderButton);
+        }*/
+
+        for (int i = 0; i < files.Length; i++)
+        {
+            if (files[i].Extension.ToLower() == ".pdf")
+            {
+                GameObject fileButton = Instantiate(fileButtonObject);
+                FileProperties properties = fileButton.GetComponent <FileProperties>();
+                properties.SetProperties(files[i], pageManager);
+                fileButton.transform.localScale = Vector3.one;
+                RectTransform rectTransform = fileButton.GetComponent<RectTransform>(); 
+                rectTransform.parent = canvasObject.GetComponent<RectTransform>();
+                ResetButtonTransform(rectTransform);
+                fileButton.SetActive(false);
+                buttons.Add(fileButton);
+            }
+        }          
+    }
+
+    // Show an align buttons on Canvas
+    private void UpdateView(int page)
+    {
+        
+    }
+
+    private void ResetButtonTransform(RectTransform rectTransform)
+    {
+        rectTransform.localScale = Vector3.one;
+        rectTransform.anchoredPosition3D = Vector3.zero;
+        rectTransform.localRotation = Quaternion.identity;
     }
 
     public void SetTransform()
