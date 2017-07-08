@@ -32,6 +32,8 @@ public class ActionManager : MonoBehaviour {
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit = new RaycastHit();
 
+        cursorRenderer.enabled = false;
+
         if (menu.isOpen())
         {
             if (menu.RaycastCanvas(ray, out hit))
@@ -39,7 +41,7 @@ public class ActionManager : MonoBehaviour {
                 cursorRenderer.enabled = true;
                 cursor.transform.position = hit.point;
                 cursor.transform.forward = hit.normal;
-            }    
+            }
         } else if (triggerHeld)
         {
             if (Physics.Raycast(ray, out hit, rayCastMaxDist, cursorRaycastMask))
@@ -49,10 +51,7 @@ public class ActionManager : MonoBehaviour {
                 cursor.transform.forward = hit.normal;
             }
         }
-        else
-        {
-            cursorRenderer.enabled = false;
-        }
+
     }
 
     public void TriggerPress()
