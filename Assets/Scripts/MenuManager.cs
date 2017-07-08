@@ -19,7 +19,7 @@ public class MenuManager : MonoBehaviour {
     private List<GameObject> buttons;
     private PageManager pageManager;
     private int width = 3;
-    private int height = 3;
+    private int height = 4;
 
     private void Start()
     {
@@ -138,7 +138,10 @@ public class MenuManager : MonoBehaviour {
 
     private void SetButtonPosition(int index, RectTransform rectTransform)
     {
-        // TODO: Set positions
+        int i = index % width;
+        int j = index / width;
+
+        rectTransform.anchoredPosition = new Vector2(i * 110 - 110, 150 - j * 110);
     }
 
     private void ResetButtonTransform(RectTransform rectTransform)
