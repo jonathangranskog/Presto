@@ -73,7 +73,6 @@ public class MenuManager : MonoBehaviour {
     // Create game objects (buttons etc.) and set their properties
     private void UpdateInfo(string path)
     {
-        buttons.Clear();
         DirectoryInfo newDir = new DirectoryInfo(path);
         folders = newDir.GetDirectories();
         FileInfo[] allFiles = newDir.GetFiles();
@@ -91,6 +90,15 @@ public class MenuManager : MonoBehaviour {
         files = documents.ToArray();        
     }
 
+    private void DestroyButtons()
+    {
+        for (int i = 0; i < buttons.Count; i++)
+        {
+            Destroy(buttons[i]);
+        }
+        buttons.Clear();
+    }
+
     // Show an align buttons on Canvas
     private void UpdateView(int page)
     {   
@@ -98,12 +106,18 @@ public class MenuManager : MonoBehaviour {
         int fileCount = files.Length;
         int totalCount = fileCount + folderCount;
         int startIndex = page * width * height;
-        if (startIndex >= totalCount) return;
         int endIndex = (page + 1) * width * height;
 
+        if (totalCount == 0)
+        {
+            DestroyButtons();
+            return;
+        }
+
+        if (startIndex >= totalCount) return;
+        
         // Clean up old game objects first
-        foreach (GameObject button in buttons) Destroy(button);
-        buttons.Clear();
+        DestroyButtons();
 
         for (int i = startIndex; i < endIndex; i++)
         {

@@ -66,7 +66,7 @@ public class ActionManager : MonoBehaviour {
                 if (button != null)
                 {
                     Debug.Log(button.gameObject.name + " pressed!");
-                    //button.onClick.Invoke();
+                    button.onClick.Invoke();
                 }
             }
         }
