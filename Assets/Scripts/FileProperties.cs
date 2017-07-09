@@ -31,8 +31,6 @@ public class FileProperties : MonoBehaviour {
         action.path = path;
         // Set name
         fileName = file.Name;
-
-        // TODO: Make sure display text is max length N
-        text.text = fileName;
+        text.text = ExtraUtils.ClampName(fileName, 13);
     }
 }

@@ -31,9 +31,6 @@ public class FolderProperties : MonoBehaviour {
         action.path = path;
         // Set name
         folderName = folder.Name;
-
-        // TODO: Make sure display text is max length N
-        text.text = folderName;
-    }
-
+        text.text = ExtraUtils.ClampName(folderName, 13);
+    } 
 }

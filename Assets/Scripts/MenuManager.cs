@@ -9,6 +9,7 @@ public class MenuManager : MonoBehaviour {
     public GameObject folderButtonObject;
     public GameObject fileButtonObject;
     public GameObject pageManagerObject;
+    public GameObject pathbarTextObject;
 
     private bool open = false;
     private Canvas canvas;
@@ -18,6 +19,7 @@ public class MenuManager : MonoBehaviour {
     private DirectoryInfo[] folders;
     private List<GameObject> buttons;
     private PageManager pageManager;
+    private Text pathbarText;
     private int width = 3;
     private int height = 4;
 
@@ -26,6 +28,7 @@ public class MenuManager : MonoBehaviour {
         pageManager = pageManagerObject.GetComponent<PageManager>();
         canvas = canvasObject.GetComponent<Canvas>();
         canvasTransform = canvasObject.GetComponent<RectTransform>();
+        pathbarText = pathbarTextObject.GetComponent<Text>();
         string myDocuments = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
         buttons = new List<GameObject>();
         OpenFolder(myDocuments);
@@ -55,6 +58,7 @@ public class MenuManager : MonoBehaviour {
     {
         DirectoryInfo currentDirInfo = new DirectoryInfo(currentDirectory);
         DirectoryInfo parent = currentDirInfo.Parent;
+        if (parent == null) return;
         OpenFolder(parent.FullName);
     }
 
@@ -87,7 +91,9 @@ public class MenuManager : MonoBehaviour {
             }
         }
 
-        files = documents.ToArray();        
+        files = documents.ToArray();
+
+        pathbarText.text = ExtraUtils.ClampFrontName(path, 47);
     }
 
     private void DestroyButtons()
