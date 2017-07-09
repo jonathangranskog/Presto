@@ -34,13 +34,14 @@ public class PageManager : MonoBehaviour {
     public void LoadImages()
     {
         pages = loader.LoadPages(converter.GetImageFolder());
+        currentPage = 0;
         UpdateScreens();
         LoadEnded();
     }
 
     public void NextPage()
     {
-        if (currentPage + 1 < pages.Count)
+        if (!loading && currentPage + 1 < pages.Count)
         {
             currentPage++;
             UpdateScreens();
@@ -49,7 +50,7 @@ public class PageManager : MonoBehaviour {
 
     public void PreviousPage()
     {
-        if (currentPage - 1 >= 0)
+        if (!loading && currentPage - 1 >= 0)
         {
             currentPage--;
             UpdateScreens();

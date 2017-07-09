@@ -81,14 +81,14 @@ public class ActionManager : MonoBehaviour {
 
     public void PadRightClick()
     {
-        // TODO: If page manager loading, interrupt!
-        pageManager.NextPage();
+        if (menu.isOpen()) menu.NextPage();
+        else pageManager.NextPage();
     }
 
     public void PadLeftClick()
     {
-        // TODO: If page manager loading, interrupt!
-        pageManager.PreviousPage();
+        if (menu.isOpen()) menu.PreviousPage();
+        else pageManager.PreviousPage();
     }
 
     public void MenuClick()

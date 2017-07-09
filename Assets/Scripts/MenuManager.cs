@@ -22,6 +22,8 @@ public class MenuManager : MonoBehaviour {
     private Text pathbarText;
     private int width = 3;
     private int height = 4;
+    private int currentPage = 0;
+    private int totalCount = 0;
 
     private void Start()
     {
@@ -54,6 +56,27 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
+    public void NextPage()
+    {
+        int maxPages = totalCount / (width * height);
+        if (currentPage < maxPages)
+        {
+            currentPage++;
+        }
+
+        UpdateView();
+    }
+
+    public void PreviousPage()
+    {
+        if (currentPage > 0)
+        {
+            currentPage--;
+        }
+
+        UpdateView();
+    }
+
     public void GoUpOneLevel()
     {
         DirectoryInfo currentDirInfo = new DirectoryInfo(currentDirectory);
@@ -69,20 +92,24 @@ public class MenuManager : MonoBehaviour {
             Debug.LogError("Directory does not exist!");
             return;
         }
+        totalCount = 0;
+        currentPage = 0;
         currentDirectory = path;
         UpdateInfo(path);
-        UpdateView(0);
+        UpdateView();
     }
 
     // Create game objects (buttons etc.) and set their properties
     private void UpdateInfo(string path)
     {
         DirectoryInfo newDir = new DirectoryInfo(path);
-        folders = newDir.GetDirectories();
+        DirectoryInfo[] allFolders = newDir.GetDirectories();
         FileInfo[] allFiles = newDir.GetFiles();
 
         List<FileInfo> documents = new List<FileInfo>();
+        List<DirectoryInfo> directories = new List<DirectoryInfo>();
 
+        // Do not display non-pdf documents
         for (int i = 0; i < allFiles.Length; i++)
         {
             if (allFiles[i].Extension == ".pdf")
@@ -91,6 +118,16 @@ public class MenuManager : MonoBehaviour {
             }
         }
 
+        // Do not display hidden folders
+        for (int i = 0; i < allFolders.Length; i++)
+        {
+            if (allFolders[i].Name[0] != '.')
+            {
+                directories.Add(allFolders[i]);
+            }
+        }
+
+        folders = directories.ToArray();
         files = documents.ToArray();
 
         pathbarText.text = ExtraUtils.ClampFrontName(path, 47);
@@ -106,13 +143,13 @@ public class MenuManager : MonoBehaviour {
     }
 
     // Show an align buttons on Canvas
-    private void UpdateView(int page)
+    private void UpdateView()
     {   
         int folderCount = folders.Length;
         int fileCount = files.Length;
-        int totalCount = fileCount + folderCount;
-        int startIndex = page * width * height;
-        int endIndex = (page + 1) * width * height;
+        int startIndex = currentPage * width * height;
+        int endIndex = (currentPage + 1) * width * height;
+        totalCount = fileCount + folderCount;
 
         if (totalCount == 0)
         {
@@ -125,17 +162,19 @@ public class MenuManager : MonoBehaviour {
         // Clean up old game objects first
         DestroyButtons();
 
+        int j = 0;
+
         for (int i = startIndex; i < endIndex; i++)
         {
             if (i < fileCount)
             {
                 GameObject fileButton = Instantiate(fileButtonObject);
                 FileProperties properties = fileButton.GetComponent<FileProperties>();
-                properties.SetProperties(files[i], pageManager);
+                properties.SetProperties(files[i], pageManager, this);
                 RectTransform rectTransform = fileButton.GetComponent<RectTransform>();
                 rectTransform.parent = canvasObject.GetComponent<RectTransform>();
                 ResetButtonTransform(rectTransform);
-                SetButtonPosition(i, rectTransform);
+                SetButtonPosition(j, rectTransform);
                 buttons.Add(fileButton);
             } else if (i < totalCount)
             { 
@@ -146,12 +185,14 @@ public class MenuManager : MonoBehaviour {
                 RectTransform rectTransform = folderButton.GetComponent<RectTransform>();
                 rectTransform.parent = canvasObject.GetComponent<RectTransform>();
                 ResetButtonTransform(rectTransform);
-                SetButtonPosition(i, rectTransform);
+                SetButtonPosition(j, rectTransform);
                 buttons.Add(folderButton);
             } else
             {
                 break;
             }
+
+            j++;
         }
 
     }

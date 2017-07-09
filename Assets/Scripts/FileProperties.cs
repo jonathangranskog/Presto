@@ -23,11 +23,12 @@ public class FileProperties : MonoBehaviour {
         image = imageObject.GetComponent<Image>();
     }
 
-    public void SetProperties(FileInfo file, PageManager manager)
+    public void SetProperties(FileInfo file, PageManager pageManager, MenuManager menuManager)
     {
         // Set path
         path = file.FullName;
-        action.pageManager = manager;
+        action.pageManager = pageManager;
+        action.menuManager = menuManager;
         action.path = path;
         // Set name
         fileName = file.Name;
