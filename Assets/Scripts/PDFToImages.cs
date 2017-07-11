@@ -7,11 +7,17 @@ public class PDFConvert
 {
     private string inputFile;
     private string output;
+    private volatile bool stop = false;
 
     public PDFConvert(string read, string write)
     {
         this.inputFile = read;
         this.output = write;
+    }
+
+    public void RequestStop()
+    {
+        stop = true;
     }
 
     public void Convert()
@@ -20,7 +26,7 @@ public class PDFConvert
         settings.BackgroundColor = new MagickColor(255, 255, 255);
         settings.Density = new Density(150, 150);
 
-        using (MagickImageCollection images = new MagickImageCollection())
+        /*using (MagickImageCollection images = new MagickImageCollection())
         {
             images.Read(this.inputFile, settings);
             int page = 1;
@@ -31,7 +37,32 @@ public class PDFConvert
                 image.Write(this.output + num + ".png");
                 page++;
             }
+        }*/
+
+        try
+        {
+            int page = 1;
+            settings.FrameIndex = 0;
+            settings.FrameCount = 5;
+
+            while (!stop)
+            {
+                MagickImageCollection images = new MagickImageCollection();
+                images.Read(this.inputFile, settings);
+                foreach (MagickImage image in images)
+                {
+                    image.Alpha(AlphaOption.Remove);
+                    string num = page.ToString(); num = num.PadLeft(5, '0');
+                    image.Write(this.output + num + ".png");
+                    page++;
+                    settings.FrameIndex++;
+                } 
+            }
+        } catch (System.Exception e)
+        {
+
         }
+
     }
 }
 
@@ -44,6 +75,7 @@ public class PDFToImages : MonoBehaviour {
     private Thread convertThread;
     private int pdfNumber = 0;
     private PageManager manager;
+    private PDFConvert converter;
 
 	void Awake () {
         saveDirectory = Path.GetTempPath();
@@ -65,8 +97,9 @@ public class PDFToImages : MonoBehaviour {
         string imageSaveDir = GenerateNewDirectory(saveDirectory);
         Directory.CreateDirectory(imageSaveDir);
         finished = false;
-        PDFConvert converter = new PDFConvert(inputFile, imageSaveDir);
-        convertThread = new Thread(new ThreadStart(converter.Convert));
+        converter = new PDFConvert(inputFile, imageSaveDir);
+        //convertThread = new Thread(new ThreadStart(converter.Convert));
+        convertThread = new Thread(converter.Convert);
         convertThread.Start();
         // Unfortunately message sending doesn't work from a 2nd thread
         // so we have to repeatedly check if conversion has finished
@@ -109,15 +142,14 @@ public class PDFToImages : MonoBehaviour {
 
     public void Interrupt()
     {
-        // This is not actually stopping the thread
-        // It just keeps the conversion running in the background without ever using the results
-        // No idea how to stop ImageMagick from reading a PDF file it has already opened.
         if (!finished && convertThread != null && convertThread.IsAlive)
         {
+            converter.RequestStop();
             convertThread.Interrupt();
             convertThread.Abort();
             CancelInvoke("CheckFinish");
             convertThread = null;
+            converter = null;
             finished = true;
         }
     }
