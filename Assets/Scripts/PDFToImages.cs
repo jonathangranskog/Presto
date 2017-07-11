@@ -109,13 +109,16 @@ public class PDFToImages : MonoBehaviour {
 
     public void Interrupt()
     {
-        // TODO: Does this actually interrupt and stop processing? Need to backtrack also.
-        // If interrupted before convert has finished, then ImageLoader should contain old pdf
-        // Might be enough to Check current pdfNumber, delete the newly created directory
-        // and subtract from pdf number
-        if (!finished && convertThread != null)
+        // This is not actually stopping the thread
+        // It just keeps the conversion running in the background without ever using the results
+        // No idea how to stop ImageMagick from reading a PDF file it has already opened.
+        if (!finished && convertThread != null && convertThread.IsAlive)
         {
             convertThread.Interrupt();
+            convertThread.Abort();
+            CancelInvoke("CheckFinish");
+            convertThread = null;
+            finished = true;
         }
     }
 

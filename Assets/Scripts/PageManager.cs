@@ -14,6 +14,8 @@ public class PageManager : MonoBehaviour {
     private List<Texture2D> pages;
     private GameObject loadingSign;
     private int currentPage = 0;
+    private int previousPage = 0;
+    private bool converting = false;
 
     void Start() {
         loader = GetComponent<ImageLoader>();
@@ -27,16 +29,30 @@ public class PageManager : MonoBehaviour {
     // Afterwards the converter sends a message to this object and calls LoadImages()
     public void LoadPDF(string file)
     {
+        previousPage = currentPage;
+        converting = true;
         LoadStarted();
         converter.Convert(file);
     }
 
     public void LoadImages()
     {
+        converting = false;
         pages = loader.LoadPages(converter.GetImageFolder());
         currentPage = 0;
         UpdateScreens();
         LoadEnded();
+    }
+
+    public void Interrupt()
+    {
+        if (converting)
+        {
+            converter.Interrupt();
+            currentPage = previousPage;
+            LoadEnded();
+            UpdateScreens();
+        }
     }
 
     public void NextPage()

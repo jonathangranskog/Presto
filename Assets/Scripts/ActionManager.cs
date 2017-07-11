@@ -93,7 +93,8 @@ public class ActionManager : MonoBehaviour {
 
     public void MenuClick()
     {
-        menu.Toggle();
+        if (pageManager.loading) pageManager.Interrupt();
+        else menu.Toggle();
     }
 
     private void CreateCursor()
