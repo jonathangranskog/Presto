@@ -12,6 +12,7 @@ public class MenuManager : MonoBehaviour {
     public GameObject pathbarTextObject;
     public GameObject settingsMenuObject;
     public GameObject fileFolderParentObject;
+    public List<GameObject> toggles;
 
     private bool open = false;
     private Canvas canvas;
@@ -27,7 +28,7 @@ public class MenuManager : MonoBehaviour {
     private int currentPage = 0;
     private int totalCount = 0;
     private bool settingsOpen = false;
-
+    
     private void Start()
     {
         pageManager = pageManagerObject.GetComponent<PageManager>();
@@ -63,6 +64,35 @@ public class MenuManager : MonoBehaviour {
             open = true;
             SetTransform();
             gameObject.SetActive(true);
+        }
+    }
+
+    public void TriggerAction(Ray ray)
+    {
+        RaycastHit hit = new RaycastHit();
+        if (RaycastCanvas(ray, out hit))
+        {
+            Vector3[] settingsCorners = new Vector3[4];
+            settingsMenuObject.GetComponent<RectTransform>().GetWorldCorners(settingsCorners);
+
+            if (settingsOpen && WithinPlane(hit.point, settingsCorners))
+            {
+                Toggle toggle = GetToggleAtPosition(hit.point);
+                if (toggle != null)
+                {
+                    Debug.Log("Hit toggle: " + toggle.gameObject.name);
+                    toggle.onValueChanged.Invoke(!toggle.isOn);
+                    toggle.isOn = !toggle.isOn;
+                }
+
+            } else
+            {
+                Button button = GetButtonAtPosition(hit.point);
+                if (button != null)
+                {
+                    button.onClick.Invoke();
+                }
+            }
         }
     }
 
@@ -274,6 +304,28 @@ public class MenuManager : MonoBehaviour {
                 if (WithinPlane(pos, corners))
                 {
                     return obj.GetComponent<Button>();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    // TODO: GetButtonAtPosition and GetToggleAtPosition could probably be combined
+    private Toggle GetToggleAtPosition(Vector3 pos)
+    {
+        for (int i = 0; i < toggles.Count; i++)
+        {
+            GameObject obj = toggles[i];
+            RectTransform transform = obj.GetComponent<RectTransform>();
+
+            if (obj.activeInHierarchy && obj.GetComponent<Toggle>() != null)
+            {
+                Vector3[] corners = new Vector3[4];
+                transform.GetWorldCorners(corners);
+                if (WithinPlane(pos, corners))
+                {
+                    return obj.GetComponent<Toggle>();
                 }
             }
         }

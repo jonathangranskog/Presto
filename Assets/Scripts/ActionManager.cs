@@ -59,15 +59,7 @@ public class ActionManager : MonoBehaviour {
         if (menu.isOpen())
         {
             Ray ray = new Ray(transform.position, transform.forward);
-            RaycastHit hit = new RaycastHit();
-            if (menu.RaycastCanvas(ray, out hit))
-            {
-                Button button = menu.GetButtonAtPosition(hit.point);
-                if (button != null)
-                {
-                    button.onClick.Invoke();
-                }
-            }
+            menu.TriggerAction(ray);
         }
 
         triggerHeld = true;

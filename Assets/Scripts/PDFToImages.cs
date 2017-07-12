@@ -26,19 +26,6 @@ public class PDFConvert
         settings.BackgroundColor = new MagickColor(255, 255, 255);
         settings.Density = new Density(150, 150);
 
-        /*using (MagickImageCollection images = new MagickImageCollection())
-        {
-            images.Read(this.inputFile, settings);
-            int page = 1;
-            foreach (MagickImage image in images)
-            {
-                image.Alpha(AlphaOption.Remove);
-                string num = page.ToString(); num = num.PadLeft(5, '0');
-                image.Write(this.output + num + ".png");
-                page++;
-            }
-        }*/
-
         try
         {
             int page = 1;
