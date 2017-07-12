@@ -10,6 +10,8 @@ public class MenuManager : MonoBehaviour {
     public GameObject fileButtonObject;
     public GameObject pageManagerObject;
     public GameObject pathbarTextObject;
+    public GameObject settingsMenuObject;
+    public GameObject fileFolderParentObject;
 
     private bool open = false;
     private Canvas canvas;
@@ -24,6 +26,7 @@ public class MenuManager : MonoBehaviour {
     private int height = 4;
     private int currentPage = 0;
     private int totalCount = 0;
+    private bool settingsOpen = false;
 
     private void Start()
     {
@@ -41,12 +44,19 @@ public class MenuManager : MonoBehaviour {
         return open;
     }
 
+    public bool isSettingsOpen()
+    {
+        return settingsOpen;
+    }
+
     public void Toggle()
     {      
         if (open)
         {
             open = false;
             gameObject.SetActive(false);
+            settingsOpen = false;
+            settingsMenuObject.SetActive(false);
         }
         else
         {
@@ -75,6 +85,12 @@ public class MenuManager : MonoBehaviour {
         }
 
         UpdateView();
+    }
+
+    public void ToggleSettings()
+    {
+        settingsOpen = !settingsOpen;
+        settingsMenuObject.SetActive(settingsOpen);
     }
 
     public void GoUpOneLevel()
@@ -130,7 +146,7 @@ public class MenuManager : MonoBehaviour {
         folders = directories.ToArray();
         files = documents.ToArray();
 
-        pathbarText.text = ExtraUtils.ClampFrontName(path, 47);
+        pathbarText.text = ExtraUtils.ClampFrontName(path, 40);
     }
 
     private void DestroyButtons()
@@ -172,7 +188,7 @@ public class MenuManager : MonoBehaviour {
                 FileProperties properties = fileButton.GetComponent<FileProperties>();
                 properties.SetProperties(files[i], pageManager, this);
                 RectTransform rectTransform = fileButton.GetComponent<RectTransform>();
-                rectTransform.parent = canvasObject.GetComponent<RectTransform>();
+                rectTransform.parent = fileFolderParentObject.GetComponent<RectTransform>();
                 ResetButtonTransform(rectTransform);
                 SetButtonPosition(j, rectTransform);
                 buttons.Add(fileButton);
@@ -183,7 +199,7 @@ public class MenuManager : MonoBehaviour {
                 FolderProperties properties = folderButton.GetComponent<FolderProperties>();
                 properties.SetProperties(folders[index], this);
                 RectTransform rectTransform = folderButton.GetComponent<RectTransform>();
-                rectTransform.parent = canvasObject.GetComponent<RectTransform>();
+                rectTransform.parent = fileFolderParentObject.GetComponent<RectTransform>();
                 ResetButtonTransform(rectTransform);
                 SetButtonPosition(j, rectTransform);
                 buttons.Add(folderButton);
@@ -223,6 +239,7 @@ public class MenuManager : MonoBehaviour {
         RaycastHit h = new RaycastHit();
         hit = h;
         Vector3[] canvasCorners = new Vector3[4];
+        if (canvasTransform == null) return false;
         canvasTransform.GetWorldCorners(canvasCorners);
         Plane canvasPlane = new Plane(canvasCorners[0], canvasCorners[1], canvasCorners[2]);
 

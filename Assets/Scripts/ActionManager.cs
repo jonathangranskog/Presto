@@ -65,7 +65,6 @@ public class ActionManager : MonoBehaviour {
                 Button button = menu.GetButtonAtPosition(hit.point);
                 if (button != null)
                 {
-                    Debug.Log(button.gameObject.name + " pressed!");
                     button.onClick.Invoke();
                 }
             }

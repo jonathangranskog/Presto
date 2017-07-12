@@ -48,6 +48,7 @@ public class PDFConvert
             while (!stop)
             {
                 MagickImageCollection images = new MagickImageCollection();
+
                 images.Read(this.inputFile, settings);
                 foreach (MagickImage image in images)
                 {
