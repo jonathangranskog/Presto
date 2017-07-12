@@ -80,9 +80,7 @@ public class MenuManager : MonoBehaviour {
                 Toggle toggle = GetToggleAtPosition(hit.point);
                 if (toggle != null)
                 {
-                    Debug.Log("Hit toggle: " + toggle.gameObject.name);
-                    toggle.onValueChanged.Invoke(!toggle.isOn);
-                    toggle.isOn = !toggle.isOn;
+                    toggle.gameObject.GetComponent<TogglePress>().Toggle();
                 }
 
             } else
@@ -297,7 +295,7 @@ public class MenuManager : MonoBehaviour {
             RectTransform transform = graphic.rectTransform;
             GameObject obj = transform.gameObject;
 
-            if (obj.GetComponent<Button>() != null)
+            if (obj.activeInHierarchy && obj.GetComponent<Button>() != null)
             {
                 Vector3[] corners = new Vector3[4];
                 transform.GetWorldCorners(corners);
