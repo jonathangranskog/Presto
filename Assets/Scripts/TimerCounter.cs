@@ -13,10 +13,12 @@ public class TimerCounter : MonoBehaviour {
     private bool reversed = false;
     private Canvas canvas;
     private bool running = false;
+    private int step = 30;
 
 	void Start () {
         timerText = textObject.GetComponent<Text>();
         canvas = GetComponentInChildren<Canvas>();
+        ResetTime();
     }
 
     public void TriggerAction(Ray ray)
@@ -24,7 +26,7 @@ public class TimerCounter : MonoBehaviour {
         RaycastHit hit;
         if (Raycast(ray, out hit))
         {
-            if (running) StopTick();
+            if (running) Pause();
             else StartTick();
         }
     }
@@ -42,7 +44,6 @@ public class TimerCounter : MonoBehaviour {
 
     public void StartTick()
     {
-        ResetTime();
         running = true;
         CancelInvoke("Tick");
         InvokeRepeating("Tick", 0.0f, 1.0f);
@@ -65,6 +66,45 @@ public class TimerCounter : MonoBehaviour {
     {
         minutes = startMinutes;
         seconds = startSeconds;
+        UpdateText();
+    }
+
+    public void StepBack()
+    {
+        seconds -= step;
+
+        int sub = 0;
+        while (seconds < 0)
+        {
+            seconds += 60;
+            sub++;
+        }
+
+        minutes -= sub;
+
+        if (minutes < 0)
+        {
+            minutes = 0;
+            seconds = 0;
+            StopTick();
+        }
+
+        UpdateText();
+    }
+
+    public void StepForward()
+    {
+        seconds += step;
+        minutes += seconds / 60;
+        seconds %= 60;
+
+        if (minutes > 99)
+        {
+            minutes = 99;
+            seconds = 59;
+            StopTick();
+        }
+
         UpdateText();
     }
 
