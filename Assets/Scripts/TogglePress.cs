@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class TogglePress : MonoBehaviour {
 
     public GameObject checkboxObject;
-
+    
     private Toggle toggle;
 
 	// Use this for initialization
