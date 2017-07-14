@@ -6,6 +6,7 @@ public class TimerCounter : MonoBehaviour {
     public GameObject textObject;
     public int startMinutes = 0;
     public int startSeconds = 0;
+    public int padStep = 30;
     
     private int minutes;
     private int seconds;
@@ -13,8 +14,7 @@ public class TimerCounter : MonoBehaviour {
     private bool reversed = false;
     private Canvas canvas;
     private bool running = false;
-    private int step = 30;
-
+    
 	void Start () {
         timerText = textObject.GetComponent<Text>();
         canvas = GetComponentInChildren<Canvas>();
@@ -27,13 +27,12 @@ public class TimerCounter : MonoBehaviour {
         if (Raycast(ray, out hit))
         {
             if (running) Pause();
-            else StartTick();
+            else Run();
         }
     }
 
     public void Show(bool value)
     {
-        if (!value) Pause();
         gameObject.SetActive(value);
     }
 
@@ -42,108 +41,86 @@ public class TimerCounter : MonoBehaviour {
         reversed = value;
     }
 
-    public void StartTick()
+    private void Run()
     {
         running = true;
         CancelInvoke("Tick");
         InvokeRepeating("Tick", 0.0f, 1.0f);
     }
 
-    public void Pause()
+    private void Pause()
     {
         running = false;
         CancelInvoke("Tick");
     }
 
-    public void StopTick()
+    private void StopTick()
     {
-        running = false;
-        CancelInvoke("Tick");
+        Pause();
+        timerText.color = new Color(1.0f, 0.788f, 0.561f);
         Invoke("ResetTime", 2.5f);
+    }
+
+    private void SetTime(int mins, int secs)
+    {
+        minutes = mins; seconds = secs;
     }
 
     private void ResetTime()
     {
-        minutes = startMinutes;
-        seconds = startSeconds;
+        timerText.color = new Color(0.914f, 0.914f, 0.914f);
+        SetTime(startMinutes, startSeconds);
         UpdateText();
     }
 
-    public void StepBack()
+    public void LeftPadStep()
     {
-        seconds -= step;
+        StepBack(padStep);
+    }
+
+    public void RightPadStep()
+    {
+        StepForward(padStep);
+    }
+
+    private void StepBack(int secs)
+    {
+        seconds -= secs;
 
         int sub = 0;
         while (seconds < 0)
         {
-            seconds += 60;
-            sub++;
+            seconds += 60; sub++;
         }
 
         minutes -= sub;
 
         if (minutes < 0)
         {
-            minutes = 0;
-            seconds = 0;
-            StopTick();
+            SetTime(0, 0);
+            if (running) StopTick();
         }
 
         UpdateText();
     }
 
-    public void StepForward()
+    private void StepForward(int secs)
     {
-        seconds += step;
-        minutes += seconds / 60;
+        seconds += secs; minutes += seconds / 60;
         seconds %= 60;
 
         if (minutes > 99)
         {
-            minutes = 99;
-            seconds = 59;
-            StopTick();
+            SetTime(99, 59);
+            if (running) StopTick();
         }
-
         UpdateText();
     }
 
     private void Tick()
     {
-        if (reversed)
-        {
-            seconds--;
-            if (seconds < 0)
-            {
-                seconds = 59;
-                minutes--;
-
-                if (minutes < 0)
-                {
-                    seconds = 0;
-                    minutes = 0;
-                    StopTick();
-                }
-            } 
-        } else
-        {
-            seconds++;
-            if (seconds >= 60)
-            {
-                seconds = 0;
-                minutes++;
-
-                if (minutes > 99)
-                {
-                    minutes = 99;
-                    seconds = 59;
-                    StopTick();
-                }
-
-            }
-        }
-
-        UpdateText();
+        if (reversed) StepBack(1);
+        else StepForward(1);
     }
 
     private void UpdateText()

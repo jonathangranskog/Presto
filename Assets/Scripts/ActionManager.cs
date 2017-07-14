@@ -105,14 +105,14 @@ public class ActionManager : MonoBehaviour {
     public void PadRightClick()
     {
         if (menu.isOpen()) menu.NextPage();
-        else if (hitObj == HitObject.Timer) timer.StepForward();
+        else if (hitObj == HitObject.Timer) timer.RightPadStep();
         else pageManager.NextPage();
     }
 
     public void PadLeftClick()
     {
         if (menu.isOpen()) menu.PreviousPage();
-        else if (hitObj == HitObject.Timer) timer.StepBack();
+        else if (hitObj == HitObject.Timer) timer.LeftPadStep();
         else pageManager.PreviousPage();
     }
 
