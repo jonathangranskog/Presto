@@ -115,18 +115,4 @@ public class SceneActionManager : ActionManager {
         if (pageManager.loading) pageManager.Interrupt();
         else menu.Toggle();
     }
-
-    private void CreateCursor()
-    {
-        GameObject cursorObj = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        cursorRenderer = cursorObj.GetComponent<MeshRenderer>();
-        cursorObj.transform.localScale = 0.025f * (new Vector3(1, 0.01f, 1));
-        cursorRenderer.enabled = false;
-        cursorRenderer.material = cursorMaterial;
-        cursorObj.transform.Rotate(90, 0, 0);
-        Destroy(cursorObj.GetComponent<CapsuleCollider>());
-        cursor = new GameObject();
-        cursor.name = "Cursor";
-        cursorObj.transform.parent = cursor.transform;
-    }
 }

@@ -18,7 +18,7 @@ abstract public class ActionManager : MonoBehaviour {
 
     abstract public void MenuClick();
 
-    private void CreateCursor()
+    protected void CreateCursor()
     {
         GameObject cursorObj = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         cursorRenderer = cursorObj.GetComponent<MeshRenderer>();
