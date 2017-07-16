@@ -13,7 +13,9 @@ sysinfo.txt
 /Assets/AssetStoreTools*
 *.apk
 *.unitypackage
- 
+*.exe
+Presto_Data/
+
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
 # ===================================== #

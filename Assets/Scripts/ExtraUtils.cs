@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
 public static class ExtraUtils {
 
@@ -75,6 +77,51 @@ public static class ExtraUtils {
         }
     }
 
+    public static Button GetButtonAtPosition(Canvas canvas, Vector3 pos)
+    {
+        IList<Graphic> graphics = GraphicRegistry.GetGraphicsForCanvas(canvas);
+
+        for (int i = 0; i < graphics.Count; i++)
+        {
+            Graphic graphic = graphics[i];
+            RectTransform transform = graphic.rectTransform;
+            GameObject obj = transform.gameObject;
+
+            if (obj.activeInHierarchy && obj.GetComponent<Button>() != null)
+            {
+                Vector3[] corners = new Vector3[4];
+                transform.GetWorldCorners(corners);
+                if (ExtraUtils.WithinPlane(pos, corners))
+                {
+                    return obj.GetComponent<Button>();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public static Toggle GetToggleAtPosition(List<GameObject> toggles, Vector3 pos)
+    {
+        for (int i = 0; i < toggles.Count; i++)
+        {
+            GameObject obj = toggles[i];
+            RectTransform transform = obj.GetComponent<RectTransform>();
+
+            if (obj.activeInHierarchy && obj.GetComponent<Toggle>() != null)
+            {
+                Vector3[] corners = new Vector3[4];
+                transform.GetWorldCorners(corners);
+                if (ExtraUtils.WithinPlane(pos, corners))
+                {
+                    return obj.GetComponent<Toggle>();
+                }
+            }
+        }
+
+        return null;
+    }
+
     public static bool WithinPlane(Vector3 point, Vector3[] corners)
     {
         bool tri1 = WithinTriangle(point, corners[0], corners[1], corners[2]);
@@ -104,6 +151,13 @@ public static class ExtraUtils {
         }
 
         return false;
+    }
+
+    public static void ResetRectTransform(RectTransform transform)
+    {
+        transform.localScale = Vector3.one;
+        transform.anchoredPosition3D = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
     }
 
 }

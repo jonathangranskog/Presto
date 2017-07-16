@@ -16,7 +16,6 @@ public class MenuManager : MonoBehaviour {
 
     private bool open = false;
     private Canvas canvas;
-    private RectTransform canvasTransform;
     private string currentDirectory;
     private FileInfo[] files;
     private DirectoryInfo[] folders;
@@ -76,7 +75,7 @@ public class MenuManager : MonoBehaviour {
 
             if (settingsOpen && ExtraUtils.WithinPlane(hit.point, settingsCorners))
             {
-                Toggle toggle = GetToggleAtPosition(hit.point);
+                Toggle toggle = ExtraUtils.GetToggleAtPosition(toggles, hit.point);
                 if (toggle != null)
                 {
                     toggle.gameObject.GetComponent<TogglePress>().Toggle();
@@ -84,7 +83,7 @@ public class MenuManager : MonoBehaviour {
 
             } else
             {
-                Button button = GetButtonAtPosition(hit.point);
+                Button button = ExtraUtils.GetButtonAtPosition(canvas, hit.point);
                 if (button != null)
                 {
                     button.onClick.Invoke();
@@ -216,7 +215,7 @@ public class MenuManager : MonoBehaviour {
                 properties.SetProperties(files[i], pageManager, this);
                 RectTransform rectTransform = fileButton.GetComponent<RectTransform>();
                 rectTransform.parent = fileFolderParentObject.GetComponent<RectTransform>();
-                ResetButtonTransform(rectTransform);
+                ExtraUtils.ResetRectTransform(rectTransform);
                 SetButtonPosition(j, rectTransform);
                 buttons.Add(fileButton);
             } else if (i < totalCount)
@@ -227,7 +226,7 @@ public class MenuManager : MonoBehaviour {
                 properties.SetProperties(folders[index], this);
                 RectTransform rectTransform = folderButton.GetComponent<RectTransform>();
                 rectTransform.parent = fileFolderParentObject.GetComponent<RectTransform>();
-                ResetButtonTransform(rectTransform);
+                ExtraUtils.ResetRectTransform(rectTransform);
                 SetButtonPosition(j, rectTransform);
                 buttons.Add(folderButton);
             } else
@@ -248,13 +247,6 @@ public class MenuManager : MonoBehaviour {
         rectTransform.anchoredPosition = new Vector2(i * 110 - 110, 150 - j * 110);
     }
 
-    private void ResetButtonTransform(RectTransform rectTransform)
-    {
-        rectTransform.localScale = Vector3.one;
-        rectTransform.anchoredPosition3D = Vector3.zero;
-        rectTransform.localRotation = Quaternion.identity;
-    }
-
     public void SetTransform()
     {
         transform.position = Camera.main.transform.position + Camera.main.transform.forward * 1.5f;
@@ -271,56 +263,4 @@ public class MenuManager : MonoBehaviour {
         }
         return ExtraUtils.RaycastCanvas(canvas, ray, out hit);
     }
-
-    // Assumes point is on the same plane as button
-    public Button GetButtonAtPosition(Vector3 pos)
-    {
-        IList<Graphic> graphics = GraphicRegistry.GetGraphicsForCanvas(canvas);
-
-        for (int i = 0; i < graphics.Count; i++)
-        {
-            Graphic graphic = graphics[i];
-            RectTransform transform = graphic.rectTransform;
-            GameObject obj = transform.gameObject;
-
-            if (obj.activeInHierarchy && obj.GetComponent<Button>() != null)
-            {
-                Vector3[] corners = new Vector3[4];
-                transform.GetWorldCorners(corners);
-                if (ExtraUtils.WithinPlane(pos, corners))
-                {
-                    return obj.GetComponent<Button>();
-                }
-            }
-        }
-
-        return null;
-    }
-
-    // TODO: GetButtonAtPosition and GetToggleAtPosition could probably be combined
-    private Toggle GetToggleAtPosition(Vector3 pos)
-    {
-        for (int i = 0; i < toggles.Count; i++)
-        {
-            GameObject obj = toggles[i];
-            RectTransform transform = obj.GetComponent<RectTransform>();
-
-            if (obj.activeInHierarchy && obj.GetComponent<Toggle>() != null)
-            {
-                Vector3[] corners = new Vector3[4];
-                transform.GetWorldCorners(corners);
-                if (ExtraUtils.WithinPlane(pos, corners))
-                {
-                    return obj.GetComponent<Toggle>();
-                }
-            }
-        }
-
-        return null;
-    }
-
-    
-
-    
-
 }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MainMenuActionManager : ActionManager {
@@ -34,27 +32,27 @@ public class MainMenuActionManager : ActionManager {
 
     public override void MenuClick()
     {
-        throw new NotImplementedException();
+
     }
 
     public override void PadLeftClick()
     {
-        throw new NotImplementedException();
+
     }
 
     public override void PadRightClick()
     {
-        throw new NotImplementedException();
+
     }
 
     public override void TriggerPress()
     {
-        throw new NotImplementedException();
+        menuManager.TriggerAction(ray);
     }
 
     public override void TriggerUnpress()
     {
-        throw new NotImplementedException();
+
     }
 
 }
