@@ -19,7 +19,9 @@ public class SceneButtonAction : MonoBehaviour {
 
     public void LoadScene()
     {
+#if !UNITY_EDITOR
         SceneManager.LoadSceneAsync(scene.sceneIndex);
+#endif
     }
 
     public void SetScene(Scene s)
