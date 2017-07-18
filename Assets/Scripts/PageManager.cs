@@ -22,7 +22,6 @@ public class PageManager : MonoBehaviour {
         converter = converterObject.GetComponent<PDFToImages>();
         pages = new List<Texture2D>();
         loading = false;
-        LoadPDF("Test/input.pdf");
     }
 
     // Loads a pdf by first telling the converter to convert a pdf to images
