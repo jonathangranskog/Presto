@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.IO;
 
 public class MenuManager : MonoBehaviour {
@@ -27,6 +28,7 @@ public class MenuManager : MonoBehaviour {
     private int currentPage = 0;
     private int totalCount = 0;
     private bool settingsOpen = false;
+    private Camera mainCamera;
     
     private void Start()
     {
@@ -35,6 +37,7 @@ public class MenuManager : MonoBehaviour {
         pathbarText = pathbarTextObject.GetComponent<Text>();
         string myDocuments = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
         buttons = new List<GameObject>();
+        mainCamera = Camera.main;
         OpenFolder(myDocuments);
     }
 
@@ -172,7 +175,7 @@ public class MenuManager : MonoBehaviour {
         folders = directories.ToArray();
         files = documents.ToArray();
 
-        pathbarText.text = ExtraUtils.ClampFrontName(path, 40);
+        pathbarText.text = ExtraUtils.ClampFrontName(path, 36);
     }
 
     private void DestroyButtons()
@@ -249,8 +252,8 @@ public class MenuManager : MonoBehaviour {
 
     public void SetTransform()
     {
-        transform.position = Camera.main.transform.position + Camera.main.transform.forward * 1.5f;
-        transform.LookAt(Camera.main.transform);
+        transform.position = mainCamera.transform.position + mainCamera.transform.forward * 1.5f;
+        transform.LookAt(mainCamera.transform);
     }
 
     public bool Raycast(Ray ray, out RaycastHit hit)
@@ -262,5 +265,12 @@ public class MenuManager : MonoBehaviour {
             return false;
         }
         return ExtraUtils.RaycastCanvas(canvas, ray, out hit);
+    }
+
+    public void GoHome()
+    {
+#if !UNITY_EDITOR
+        SceneManager.LoadSceneAsync(0);
+#endif
     }
 }
