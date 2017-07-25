@@ -19,6 +19,7 @@ public class TimerCounter : MonoBehaviour {
         timerText = textObject.GetComponent<Text>();
         canvas = GetComponentInChildren<Canvas>();
         ResetTime();
+        gameObject.SetActive(false);
     }
 
     public void TriggerAction(Ray ray)

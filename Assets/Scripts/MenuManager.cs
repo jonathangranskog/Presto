@@ -39,6 +39,7 @@ public class MenuManager : MonoBehaviour {
         buttons = new List<GameObject>();
         mainCamera = Camera.main;
         OpenFolder(myDocuments);
+        gameObject.SetActive(false);
     }
 
     public bool isOpen()
