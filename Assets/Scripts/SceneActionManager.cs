@@ -98,15 +98,15 @@ public class SceneActionManager : ActionManager {
 
     override public void PadRightClick()
     {
-        if (menu.isOpen()) menu.NextPage();
-        else if (hitObj == HitObject.Timer) timer.RightPadStep();
+        if (hitObj == HitObject.Timer) timer.RightPadStep();
+        else if (menu.isOpen()) menu.NextPage();
         else pageManager.NextPage();
     }
 
     override public void PadLeftClick()
     {
-        if (menu.isOpen()) menu.PreviousPage();
-        else if (hitObj == HitObject.Timer) timer.LeftPadStep();
+        if (hitObj == HitObject.Timer) timer.LeftPadStep();
+        else if (menu.isOpen()) menu.PreviousPage();
         else pageManager.PreviousPage();
     }
 
