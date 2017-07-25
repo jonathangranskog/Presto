@@ -30,6 +30,9 @@ public class SteamVRControllerActions : MonoBehaviour {
     private void OnDisable()
     {
         controller.PadClicked -= PadClick;
+        controller.TriggerClicked -= TriggerClick;
+        controller.TriggerUnclicked -= TriggerUnclick;
+        controller.MenuButtonClicked -= MenuClick;
     }
 
     private void PadClick(object sender, ClickedEventArgs e)
