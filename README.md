@@ -1,6 +1,6 @@
 # Presto - A VR Application to Practice Presentations
 
-Presto is a virtual reality application for SteamVR that lets you practice presentations in virtual environments. Its goal is to let you use tools that help you improve your presentations and prepare for the real deal. Presto reads normal PDF files so need to do anything extra.
+Presto is a virtual reality application for SteamVR that lets you practice presentations in virtual environments. Its goal is to let you use tools that help you improve your presentations and prepare for the real deal. Presto reads normal PDF files so no need to do anything extra.
 
 ## How to install
 
@@ -8,7 +8,7 @@ A binary file is provided, but you can also choose to build the Unity scene your
 
 There are some additional DLLs that are used by Presto, such as System.Drawing and Magick.Net. I have no idea if the supplied System.Drawing will work with other computers so you might have to replace it with your own. It can be found here: C:\Windows\Microsoft.NET\Framework\v2.0.50727\
 
-With these set up, Presto should build just fine. Let me know if you encounter any issues. 
+With these set up, Presto should build just fine in Unity 5.5.3f1, but please let me know if you encounter any issues with anything. 
 
 ## How to use
 
