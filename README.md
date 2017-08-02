@@ -8,7 +8,7 @@ A binary file is provided, but you can also choose to build the Unity scene your
 
 There are some additional DLLs that are used by Presto, such as System.Drawing and Magick.Net. I have no idea if the supplied System.Drawing will work with other computers so you might have to replace it with your own. It can be found here: C:\Windows\Microsoft.NET\Framework\v2.0.50727\
 
-With these set up, Presto should build just fine in Unity 5.5.3f1, but please let me know if you encounter any issues with anything. 
+With these set up, Presto should build and run just fine in Unity 5.5.3f1, but please let me know if you encounter any issues with anything. 
 
 ## How to use
 
@@ -21,7 +21,7 @@ A file can be selected by opening up the file browser window with the menu butto
 A new scene is created by adding in all the necessary prefabs, scripts and connections to a new unity scene. The steps that need to be taken are:
 
 * Bring in the geometry that will be used for the scene
-* Add a SteamVR Camera from the SteamVR Plugin and add "SteamVR Controller Actions", "SteamVR_TrackedController" and "SceneActionManager" scripts to each controller (Controller(left) and Controller(right))
+* Add a SteamVR Camera from the SteamVR Plugin and add "SteamVR Controller Actions", "SteamVR_TrackedController" and "SceneActionManager" scripts to each controller (Controller(left) and Controller(right)). If you want to build for another device, replace the SteamVR Camera with another Camera system and create a ControllerActions script that will send the correct messages to the SceneActionManager. Look at "SteamVR Controller Actions" to see how.
 * Place some amount of PageScreen prefabs in the environment. These will be used to place slides onto. Remember to rotate them such that the Z-axis points away from the Camera. 
 * Add a PageManager and a PDFConverter to the scene. The PageManager needs a reference to the PDFConverter object and the PDFConverter needs a reference to the PageManager object. In addition, increase the size of the Screens parameter on the PageManager script and reference your PageScreen scripts
 * To get the UI working, Menu and Timer prefabs need to be brought in. The Menu also needs a reference to the PageManager
