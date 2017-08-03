@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+// Action for when a scene button is pressed in mainmenu scene
 public class SceneButtonAction : MonoBehaviour {
 
     public GameObject thumbnailObject;

@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
+// Action manager for mainmenu scene, only reacts to trigger actions
 public class MainMenuActionManager : ActionManager {
 
     public GameObject menuManagerObject;

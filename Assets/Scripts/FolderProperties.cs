@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.IO;
 
+// Properties for a folder, button + action
 public class FolderProperties : MonoBehaviour {
 
     public GameObject textObject;

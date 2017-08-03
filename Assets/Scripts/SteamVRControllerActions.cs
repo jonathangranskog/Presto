@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+// Sends messages to an action manager based on what buttons have been clicked etc
 public class SteamVRControllerActions : MonoBehaviour {
 
     private ActionManager actionManager;
@@ -18,6 +17,7 @@ public class SteamVRControllerActions : MonoBehaviour {
         trackedObj = GetComponent<SteamVR_TrackedObject>();
     }
 
+    // Register events
     private void OnEnable()
     {
         controller = GetComponent<SteamVR_TrackedController>();
@@ -27,6 +27,7 @@ public class SteamVRControllerActions : MonoBehaviour {
         controller.MenuButtonClicked += MenuClick;
     }
 
+    // Unregister events
     private void OnDisable()
     {
         controller.PadClicked -= PadClick;

@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+// If a toggle is pressed, run its onValueChanged functions
 public class TogglePress : MonoBehaviour {
 
     public GameObject checkboxObject;
     
     private Toggle toggle;
 
-	// Use this for initialization
 	void Start () {
         toggle = GetComponent<Toggle>();
 	}

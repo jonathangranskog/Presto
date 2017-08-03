@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using UnityEngine;
 
+// Action for folder buttons, opens folder from menumanager if pressed
 public class FolderAction : MonoBehaviour {
 
     public MenuManager menuManager;

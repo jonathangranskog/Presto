@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+// Base class for different ActionManagers
+// ie managers that receive messages from controllers and do something
 abstract public class ActionManager : MonoBehaviour {
 
     public Material cursorMaterial;

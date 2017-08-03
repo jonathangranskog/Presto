@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Class that controls what is displayed on PageScreens and manages PDF loading/conversion
 public class PageManager : MonoBehaviour {
 
     public GameObject converterObject;
@@ -34,6 +35,7 @@ public class PageManager : MonoBehaviour {
         converter.Convert(file);
     }
 
+    // Loads images from disk and updates screens
     public void LoadImages()
     {
         converting = false;
@@ -43,6 +45,8 @@ public class PageManager : MonoBehaviour {
         LoadEnded();
     }
 
+    // This function interrupts conversion, 
+    // it is called by pressing the menu button while the loading sign is visible
     public void Interrupt()
     {
         if (converting)
@@ -54,6 +58,7 @@ public class PageManager : MonoBehaviour {
         }
     }
 
+    // Moves to the next page of the slides if possible
     public void NextPage()
     {
         if (!loading && currentPage + 1 < pages.Count)
@@ -63,6 +68,7 @@ public class PageManager : MonoBehaviour {
         }
     }
 
+    // Moves to the previous page of the slides if possible
     public void PreviousPage()
     {
         if (!loading && currentPage - 1 >= 0)
@@ -72,6 +78,7 @@ public class PageManager : MonoBehaviour {
         }
     }
 
+    // Updates the texture on all screens in the screen list
     private void UpdateScreens()
     {
         if (pages.Count == 0) return;

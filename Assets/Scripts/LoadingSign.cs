@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+// Loading wheel while a PDF is converted
 public class LoadingSign : MonoBehaviour {
 
     public GameObject child;
@@ -13,7 +12,7 @@ public class LoadingSign : MonoBehaviour {
         mainCamera = Camera.main;
     }
 
-    // Update is called once per frame
+    // Keep in front of camera and rotate slowly
     void Update () {
         child.transform.Rotate(0, 0, 2);
         transform.position = mainCamera.transform.position + mainCamera.transform.forward * 1.25f;

@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 
+// Action Manager for a normal scene
 public class SceneActionManager : ActionManager {
 
+    // Enum for different objects that could have been hit by controller ray
     private enum HitObject
     {
         None,
@@ -38,6 +40,7 @@ public class SceneActionManager : ActionManager {
         cursorRenderer.enabled = false;
         hitObj = HitObject.None;
 
+        // Ray intersect menu
         RaycastHit menuHit = new RaycastHit(); bool hitMenu;
         if (hitMenu = menu.Raycast(ray, out menuHit))
         {
@@ -47,6 +50,7 @@ public class SceneActionManager : ActionManager {
             hitObj = HitObject.Menu;
         }
 
+        // Ray intersect timer and see if closer than menu
         RaycastHit timerHit = new RaycastHit(); bool hitTimer;
         if (hitTimer = timer.Raycast(ray, out timerHit))
         {
@@ -59,6 +63,7 @@ public class SceneActionManager : ActionManager {
             }
         }
 
+        // Ray intersect PageScreens and see if closer than menu and timer
         if (triggerHeld)
         {
             RaycastHit screenHit = new RaycastHit();
@@ -77,6 +82,7 @@ public class SceneActionManager : ActionManager {
 
     }
 
+    // Run appropriate action when trigger is pressed depending on ray hit object
     override public void TriggerPress()
     {
         if (hitObj == HitObject.Menu)
@@ -96,23 +102,25 @@ public class SceneActionManager : ActionManager {
         triggerHeld = false;
     }
 
+    // Action for when Pad is clicked on the right side
     override public void PadRightClick()
     {
-        if (hitObj == HitObject.Timer) timer.RightPadStep();
-        else if (menu.isOpen()) menu.NextPage();
-        else pageManager.NextPage();
+        if (hitObj == HitObject.Timer) timer.RightPadStep(); // Add time to timer
+        else if (menu.isOpen()) menu.NextPage(); // Go to next page in file browser
+        else pageManager.NextPage(); // Go to next page in PDF
     }
 
+    // Action for when Pad is clicked on the left side
     override public void PadLeftClick()
     {
-        if (hitObj == HitObject.Timer) timer.LeftPadStep();
-        else if (menu.isOpen()) menu.PreviousPage();
-        else pageManager.PreviousPage();
+        if (hitObj == HitObject.Timer) timer.LeftPadStep(); // Remove time from timer
+        else if (menu.isOpen()) menu.PreviousPage(); // Go to previous page in file browser
+        else pageManager.PreviousPage(); // Go to previous page in PDF
     }
 
     override public void MenuClick()
     {
-        if (pageManager.loading) pageManager.Interrupt();
-        else menu.Toggle();
+        if (pageManager.loading) pageManager.Interrupt(); // Interrupt if converting PDF
+        else menu.Toggle(); // open or close menu
     }
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+// Timer script
 public class TimerCounter : MonoBehaviour {
 
     public GameObject textObject;
@@ -22,6 +23,8 @@ public class TimerCounter : MonoBehaviour {
         gameObject.SetActive(false);
     }
 
+    // If trigger is pressed and pointing at timer,
+    // then either stop or continue
     public void TriggerAction(Ray ray)
     {
         RaycastHit hit;
@@ -42,6 +45,7 @@ public class TimerCounter : MonoBehaviour {
         reversed = value;
     }
 
+    // When running, add 1 repeatedly.
     private void Run()
     {
         running = true;
@@ -55,11 +59,13 @@ public class TimerCounter : MonoBehaviour {
         CancelInvoke("Tick");
     }
 
+    // When 00:00 or 99:99 is reached: Stop, set color to orange and then reset time after 2.5 seconds
     private void StopTick()
     {
         Pause();
         timerText.color = new Color(1.0f, 0.788f, 0.561f);
         Invoke("ResetTime", 2.5f);
+        // Could also play some ringing sound here
     }
 
     private void SetTime(int mins, int secs)
@@ -67,6 +73,7 @@ public class TimerCounter : MonoBehaviour {
         minutes = mins; seconds = secs;
     }
 
+    // Reset color and set back to start time
     private void ResetTime()
     {
         timerText.color = new Color(0.914f, 0.914f, 0.914f);
@@ -74,16 +81,19 @@ public class TimerCounter : MonoBehaviour {
         UpdateText();
     }
 
+    // left pad clicked, remove padStep seconds from time
     public void LeftPadStep()
     {
         StepBack(padStep);
     }
 
+    // right pad clicked, add padStep second to time
     public void RightPadStep()
     {
         StepForward(padStep);
     }
 
+    // Function to remove secs seconds from time
     private void StepBack(int secs)
     {
         seconds -= secs;
@@ -105,6 +115,7 @@ public class TimerCounter : MonoBehaviour {
         UpdateText();
     }
 
+    // Add secs seconds to time
     private void StepForward(int secs)
     {
         seconds += secs; minutes += seconds / 60;

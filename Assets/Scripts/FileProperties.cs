@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine;
 
+// Class containing information about PDF files and their button + action
 public class FileProperties : MonoBehaviour {
 
     public GameObject textObject;
@@ -32,6 +33,6 @@ public class FileProperties : MonoBehaviour {
         action.path = path;
         // Set name
         fileName = file.Name;
-        text.text = ExtraUtils.ClampName(fileName, 13);
+        text.text = ExtraUtils.ClampName(fileName, 12);
     }
 }

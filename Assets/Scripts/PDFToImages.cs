@@ -3,6 +3,7 @@ using ImageMagick;
 using System.IO;
 using System.Threading;
 
+// Class that convers PDFs to PNG files using ImageMagick and GhostScript
 public class PDFConvert
 {
     private string inputFile;
@@ -20,12 +21,19 @@ public class PDFConvert
         stop = true;
     }
 
+    // Convert PDF to PNGs
     public void Convert()
     {
         MagickReadSettings settings = new MagickReadSettings();
         settings.BackgroundColor = new MagickColor(255, 255, 255);
         settings.Density = new Density(150, 150);
 
+        // This could probably be improved somehow
+        // Try-catch because in order to check for interrupts
+        // we need to load a small amount of pages at a time and check if stop is requested
+        // I chose to convert 5 pages a time. The try catch also prevents crashing when there are no more pages
+        // This is not a very nice way, but I could not find a way to get the total amount of pages in a file
+        // without reading the whole file (SLOW AF)
         try
         {
             int page = 1;
@@ -39,7 +47,7 @@ public class PDFConvert
                 images.Read(this.inputFile, settings);
                 foreach (MagickImage image in images)
                 {
-                    image.Alpha(AlphaOption.Remove);
+                    image.Alpha(AlphaOption.Remove); // Prevent transparency in Latex generated PDFs
                     string num = page.ToString(); num = num.PadLeft(5, '0');
                     image.Write(this.output + num + ".png");
                     page++;
@@ -48,12 +56,14 @@ public class PDFConvert
             }
         } catch (System.Exception e)
         {
-
+            // Some management would probably be a good idea
+            // For example, what exception occurs if GhostScript is not installed?
         }
 
     }
 }
 
+// Class that manages conversion process
 public class PDFToImages : MonoBehaviour {
 
     public GameObject managerObject;
@@ -65,6 +75,8 @@ public class PDFToImages : MonoBehaviour {
     private PageManager manager;
     private PDFConvert converter;
 
+    // Creates a temporary directory (in OS temp location) where images will be stored
+    // while application is running
 	void Awake () {
         saveDirectory = Path.GetTempPath();
         saveDirectory.Replace(@"\", "/");
@@ -80,6 +92,7 @@ public class PDFToImages : MonoBehaviour {
         CleanImages();
     }
 
+    // Run conversion in a second thread
     public void Convert(string inputFile)
     {
         string imageSaveDir = GenerateNewDirectory(saveDirectory);
@@ -94,6 +107,8 @@ public class PDFToImages : MonoBehaviour {
         InvokeRepeating("CheckFinish", 0.5f, 1.0f);
     }
 
+    // Each pdf is stored in a separate folder in the temporary directory
+    // Folder name is only based on the number of PDFs that have been loaded
     public string GetImageFolder()
     {
         return saveDirectory + pdfNumber.ToString() + "/";
@@ -121,6 +136,7 @@ public class PDFToImages : MonoBehaviour {
         }
     }
 
+    // If finished, tell PageManager
     private void ConvertHasFinished()
     {
         finished = true;
@@ -128,6 +144,7 @@ public class PDFToImages : MonoBehaviour {
             manager.SendMessage("LoadImages");
     }
 
+    // Interrupts conversion by setting request stop and aborting the thread
     public void Interrupt()
     {
         if (!finished && convertThread != null && convertThread.IsAlive)
@@ -142,6 +159,7 @@ public class PDFToImages : MonoBehaviour {
         }
     }
 
+    // Deletes all folders containing PDF images from disk
     private void CleanImages()
     {
         DeleteDir(saveDirectory);
@@ -176,6 +194,8 @@ public class PDFToImages : MonoBehaviour {
         }
     }
 
+    // Get the folder name that should be used for the next pdf.
+    // Until there is a number that doesn't exist
     private string GenerateNewDirectory(string outputFolder)
     {
         string pdfDir = outputFolder + pdfNumber.ToString() + "/";

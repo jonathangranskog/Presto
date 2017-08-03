@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections.Generic;
 
+// Scene class that is visible in the inspector
 [System.Serializable]
 public class Scene
 {
@@ -10,6 +11,7 @@ public class Scene
     public Sprite sprite; // thumbnail
 }
 
+// Menu Manager for mainmenu scene
 public class MainMenuManager : MonoBehaviour {
 
     public List<Scene> scenes;
@@ -26,10 +28,11 @@ public class MainMenuManager : MonoBehaviour {
         CreateSceneButtons();
     }
 
+    // Function that is called when the trigger is pressed
     public void TriggerAction(Ray ray)
     {
         RaycastHit hit = new RaycastHit();
-        if (ExtraUtils.RaycastCanvas(canvas, ray, out hit))
+        if (Raycast(ray, out hit))
         {
             Button button = ExtraUtils.GetButtonAtPosition(canvas, hit.point);
             if (button != null)
@@ -44,6 +47,7 @@ public class MainMenuManager : MonoBehaviour {
         return ExtraUtils.RaycastCanvas(canvas, ray, out hit);
     }
 
+    // Creates all the buttons based on the Scenes in the scene list
     private void CreateSceneButtons()
     {
         for (int i = 0; i < Mathf.Min(scenes.Count, 8); i++)

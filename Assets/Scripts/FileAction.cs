@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
+// Action class for FileButtons, if clicked it loads the corresponding PDF.
 public class FileAction : MonoBehaviour {
 
     public PageManager pageManager;

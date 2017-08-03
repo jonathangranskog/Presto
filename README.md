@@ -36,5 +36,6 @@ A new scene is created by adding in all the necessary prefabs, scripts and conne
 * More scenes (Meeting Room and Stage)
 * Ability to enable 'Annoying Audience' from SettingsMenu, which plays random audio clips such as coughing, phone ringing in various places in the environment
 * Multi-thread PDF conversion (PDFConverter)
+* Bake lighting
 * Upgrade to 2017.1
 * Make a normal Presto setup in an empty scene or into a single prefab that can be imported into a new scene instantly

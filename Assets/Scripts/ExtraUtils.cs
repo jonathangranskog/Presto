@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+// A bunch of useful functions that are used in various classes
 public static class ExtraUtils {
 
 	public static string ClampName(string name, int n)
@@ -30,6 +31,7 @@ public static class ExtraUtils {
         }
     }
 
+    // Returns RaycastHit information and true if the ray hit the world space canvas
     public static bool RaycastCanvas(Canvas canvas, Ray ray, out RaycastHit hit)
     {
         
@@ -57,6 +59,7 @@ public static class ExtraUtils {
         return false;
     }
 
+    // Ray intersection with a bounded plane (plane defined by four corners)
     public static bool RaycastBoundedPlane(Ray ray, Vector3[] corners, Plane plane, out float t)
     {
         float dist = -1.0f;
@@ -77,6 +80,7 @@ public static class ExtraUtils {
         }
     }
 
+    // Gets the button element at an intersection point. Point has to be on Canvas.
     public static Button GetButtonAtPosition(Canvas canvas, Vector3 pos)
     {
         IList<Graphic> graphics = GraphicRegistry.GetGraphicsForCanvas(canvas);
@@ -101,6 +105,7 @@ public static class ExtraUtils {
         return null;
     }
 
+    // Gets the toggle at intersection point
     public static Toggle GetToggleAtPosition(List<GameObject> toggles, Vector3 pos)
     {
         for (int i = 0; i < toggles.Count; i++)
@@ -122,6 +127,7 @@ public static class ExtraUtils {
         return null;
     }
 
+    // Checks whether a point on the same plane is inside of the square defined by corners
     public static bool WithinPlane(Vector3 point, Vector3[] corners)
     {
         bool tri1 = WithinTriangle(point, corners[0], corners[1], corners[2]);
@@ -129,6 +135,9 @@ public static class ExtraUtils {
         return tri1 || tri2;
     }
 
+    // Barycentric comparison to see if the point is inside the triangle
+    // Source: Christer Ericson's Real-Time Collision Detection
+    // https://gamedev.stackexchange.com/questions/23743/whats-the-most-efficient-way-to-find-barycentric-coordinates
     public static bool WithinTriangle(Vector3 p, Vector3 a, Vector3 b, Vector3 c)
     {
         Vector3 e0 = b - a;

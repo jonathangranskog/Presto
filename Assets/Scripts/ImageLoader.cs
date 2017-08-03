@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ImageLoader : MonoBehaviour {
 
+    // Loads the images that were converted from a PDF, called by PageManager when conversion is finished
     public List<Texture2D> LoadPages(string saveDirectory)
     {
         List<Texture2D> pages = new List<Texture2D>();

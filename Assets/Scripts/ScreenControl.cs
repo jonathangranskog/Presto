@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+// Script for PageScreens, sets the correct scale based on texture
+// Scale stays within a square whose size is based on the scale parameter
 public class ScreenControl : MonoBehaviour {
 
     public float scale = 1.0f;

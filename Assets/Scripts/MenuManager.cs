@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.IO;
 
+// MenuManager for normal Scenes
 public class MenuManager : MonoBehaviour {
 
     public GameObject canvasObject;
@@ -38,7 +39,7 @@ public class MenuManager : MonoBehaviour {
         string myDocuments = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
         buttons = new List<GameObject>();
         mainCamera = Camera.main;
-        OpenFolder(myDocuments);
+        OpenFolder(myDocuments); // Opens default folder (My Documents)
         gameObject.SetActive(false);
     }
 
@@ -52,6 +53,7 @@ public class MenuManager : MonoBehaviour {
         return settingsOpen;
     }
 
+    // Function that is called when menu button is clicked (if not interrupt)
     public void Toggle()
     {      
         if (open)
@@ -69,6 +71,7 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
+    // Checks what the ray intersects with when the trigger is pressed and calls the appropriate function
     public void TriggerAction(Ray ray)
     {
         RaycastHit hit = new RaycastHit();
@@ -96,6 +99,7 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
+    // Moves to the next page of the file browser
     public void NextPage()
     {
         int maxPages = totalCount / (width * height);
@@ -107,6 +111,7 @@ public class MenuManager : MonoBehaviour {
         UpdateView();
     }
 
+    // Moves to the previous page of the file browser
     public void PreviousPage()
     {
         if (currentPage > 0)
@@ -117,20 +122,23 @@ public class MenuManager : MonoBehaviour {
         UpdateView();
     }
 
+    // Makes SettingsMenu visible when cogwheel icon is pressed
     public void ToggleSettings()
     {
         settingsOpen = !settingsOpen;
         settingsMenuObject.SetActive(settingsOpen);
     }
 
+    // Up arrow calls this function to open the parent folder
     public void GoUpOneLevel()
     {
         DirectoryInfo currentDirInfo = new DirectoryInfo(currentDirectory);
         DirectoryInfo parent = currentDirInfo.Parent;
-        if (parent == null) return;
+        if (parent == null) return; // If there is no parent folder
         OpenFolder(parent.FullName);
     }
 
+    // Opens a folder and updates all the necessary information and the displayed view
     public void OpenFolder(string path)
     {
         if (!Directory.Exists(path))
@@ -188,7 +196,7 @@ public class MenuManager : MonoBehaviour {
         buttons.Clear();
     }
 
-    // Show an align buttons on Canvas
+    // Show and align buttons on Canvas
     private void UpdateView()
     {   
         int folderCount = folders.Length;
@@ -210,8 +218,10 @@ public class MenuManager : MonoBehaviour {
 
         int j = 0;
 
+        // Create button objects and move them somewhere
         for (int i = startIndex; i < endIndex; i++)
         {
+            // Display files first
             if (i < fileCount)
             {
                 GameObject fileButton = Instantiate(fileButtonObject);
@@ -222,7 +232,7 @@ public class MenuManager : MonoBehaviour {
                 ExtraUtils.ResetRectTransform(rectTransform);
                 SetButtonPosition(j, rectTransform);
                 buttons.Add(fileButton);
-            } else if (i < totalCount)
+            } else if (i < totalCount) // then folders
             { 
                 int index = i - fileCount;
                 GameObject folderButton = Instantiate(folderButtonObject);
@@ -268,6 +278,7 @@ public class MenuManager : MonoBehaviour {
         return ExtraUtils.RaycastCanvas(canvas, ray, out hit);
     }
 
+    // Home button calls this function to open mainmenu scene
     public void GoHome()
     {
 #if !UNITY_EDITOR
